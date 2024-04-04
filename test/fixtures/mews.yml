@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyText
+  alt_name: MyText
+  os_id: 1
+  osm_id: 1
+  price_paid_id: 1
+  lat: 1.5
+  lng: 1.5
+
+two:
+  name: MyText
+  alt_name: MyText
+  os_id: 1
+  osm_id: 1
+  price_paid_id: 1
+  lat: 1.5
+  lng: 1.5

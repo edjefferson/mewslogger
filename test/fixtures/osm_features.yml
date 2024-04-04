@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  feature_type: MyText
+  osm_id: 1.5
+  address: MyText
+  latitude: 1.5
+  longitude: 1.5
+  borough: MyText
+  tags: MyText
+
+two:
+  feature_type: MyText
+  osm_id: 1.5
+  address: MyText
+  latitude: 1.5
+  longitude: 1.5
+  borough: MyText
+  tags: MyText

@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  mews_id: 1
+  osm_open_name_id: 1
+  osm_feature_id: 1
+  price_paid_data_point_id: 1
+
+two:
+  mews_id: 1
+  osm_open_name_id: 1
+  osm_feature_id: 1
+  price_paid_data_point_id: 1
