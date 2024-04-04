@@ -36,3 +36,4 @@
 /imports
 
 *.csv
+.DS_Store
