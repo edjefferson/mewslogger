@@ -1,6 +1,7 @@
 class MewsesController < ApplicationController
-  before_action :authenticate_user!
-
+  before_action :authenticate_admin!
+  def index
+  end
   def all_mews
     render json: {
       mewses: Mews.all.includes(:boroughs).map { |m| 
