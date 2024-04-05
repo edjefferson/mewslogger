@@ -67,3 +67,4 @@ group :test do
 end
 
 gem 'geocoder'
+gem "devise", "~> 4.9"

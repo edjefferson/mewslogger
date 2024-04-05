@@ -1,5 +1,5 @@
 class MewsesController < ApplicationController
-  skip_before_action :verify_authenticity_token
+  before_action :authenticate_user!
 
   def all_mews
     render json: {
