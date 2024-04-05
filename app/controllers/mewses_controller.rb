@@ -13,8 +13,7 @@ class MewsesController < ApplicationController
           boroughs: m.boroughs.map {|b| b.name}
         }
 
-      },
-      token: session[:_csrf_token]
+      }
     }
   end
 
