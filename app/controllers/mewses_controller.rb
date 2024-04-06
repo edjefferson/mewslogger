@@ -4,13 +4,16 @@ class MewsesController < ApplicationController
   end
   def all_mews
     render json: {
-      mewses: Mews.all.includes(:boroughs).map { |m| 
+      mewses: Mews.all.includes(:boroughs,:mews_images).map { |m| 
         {
           id: m.id,
           name: m.name,
           lat: m.lat,
           lng: m.lng,
-          boroughs: m.boroughs.map {|b| b.name}
+          boroughs: m.boroughs.map {|b| b.name},
+          visited: m.visited,
+          visited_at: m.visited_at,
+          images: m.mews_images.map {|i| i.image.thumb.url}
         }
 
       }
@@ -27,5 +30,8 @@ class MewsesController < ApplicationController
     m.image = params[:image]
 
     m.save!
+    render json: {
+      thumb_url: m.image.thumb.url
+    }
   end
 end

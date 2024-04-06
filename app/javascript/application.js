@@ -4,7 +4,7 @@ import "controllers"
 
 let map
 let markers = {}
-
+let mewses = {}
 
 document.getElementById('inputPhoto').addEventListener('change', (e) => {  
   const data = new FormData();
@@ -19,9 +19,14 @@ document.getElementById('inputPhoto').addEventListener('change', (e) => {
     headers: {
       "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
     },
-  }).then((res) => {
-    const result = res.json();
-    console.log(result);
+  }).then((res) => 
+    res.json()
+  ).then((d) => {
+    console.log(d)
+    let imageBlock = document.getElementById("images")    
+    let img = document.createElement("img")
+    img.src = d.thumb_url
+    imageBlock.appendChild(img)
   });
 });
 
@@ -105,6 +110,13 @@ const openMews = (id) => {
   console.log(id)
   document.getElementById("inputPhoto").setAttribute("data-mews-id",id)
   document.getElementById("mewspopup").style.display = "block"
+  let imageBlock = document.getElementById("images")
+  imageBlock.innerHTML = ""
+  mewses[id].images.forEach((i) => {
+    let img = document.createElement("img")
+    img.src = i
+    imageBlock.appendChild(img)
+  })
 }
 
 
@@ -116,6 +128,7 @@ const addMewsToMap = (map) => {
       response.json()
     ).then((data) => {
       data.mewses.forEach((d) => {
+        mewses[d.id] = d
         let popupContents  = `<p>${d.name} (${d.id})</p><p><a id="mews_${d.id}" class="openMews">Edit</a>`
         let popUp = L.popup().setContent(popupContents)
 
