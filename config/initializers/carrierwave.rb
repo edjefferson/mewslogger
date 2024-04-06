@@ -1,5 +1,4 @@
 CarrierWave.configure do |config|
-  config.cache_storage = :file
   config.sftp_host = ENV["FTP_HOST"]
   config.sftp_user = ENV["FTP_USER"]
   config.sftp_folder = ENV["FTP_FOLDER"]
