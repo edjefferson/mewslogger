@@ -20,4 +20,12 @@ class MewsesController < ApplicationController
   def update
     puts params
   end
+
+  def upload_image
+    m = MewsImage.new
+    m.mews_id = params[:mews_id]
+    m.image = params[:image]
+
+    m.save!
+  end
 end

@@ -7,6 +7,8 @@ class Mews < ApplicationRecord
   has_many :price_paid_data_points, :through => :mews_sources
   has_many :mews_boroughs
   has_many :boroughs, through: :mews_boroughs
+  has_many :mews_images
+
 
   reverse_geocoded_by :lat, :lng
 

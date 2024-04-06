@@ -71,3 +71,5 @@ gem "devise", "~> 4.9"
 gem 'net-ftp', require: false
 gem 'carrierwave', '~> 3.0'
 gem 'carrierwave-ftp', :require => 'carrierwave/storage/ftp/all', :git => 'https://github.com/luan/carrierwave-ftp.git'
+gem 'rmagick'
+gem 'exifr'

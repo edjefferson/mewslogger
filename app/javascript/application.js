@@ -6,6 +6,25 @@ let map
 let markers = {}
 
 
+document.getElementById('inputPhoto').addEventListener('change', (e) => {  
+  const data = new FormData();
+  const image = e.target.files[0];
+  data.append('mews_id', e.target.getAttribute("data-mews-id"));
+  data.append('name', 'sendNameHere');
+  data.append('image', image);
+
+  fetch('/imageupload', {
+    method: 'POST',    
+    body: data,
+    headers: {
+      "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
+    },
+  }).then((res) => {
+    const result = res.json();
+    console.log(result);
+  });
+});
+
 
 const redIcon = new L.Icon({
   iconUrl:
@@ -84,6 +103,7 @@ const addBordersToMap = (map) => {
 
 const openMews = (id) => {
   console.log(id)
+  document.getElementById("inputPhoto").setAttribute("data-mews-id",id)
   document.getElementById("mewspopup").style.display = "block"
 }
 
