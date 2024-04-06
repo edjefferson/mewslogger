@@ -4,10 +4,10 @@ class MewsImageUploader < CarrierWave::Uploader::Base
   # include CarrierWave::MiniMagick
 
   # Choose what kind of storage to use for this uploader:
-  if Rails.env.development? || Rails.env.test?
-    storage :file
-  else
+  if ENV["RAILS_ENV"] == "production"
     storage :sftp
+  else
+    storage :file
   end
   # storage :fog
 
