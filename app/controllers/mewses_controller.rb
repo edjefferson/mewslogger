@@ -30,7 +30,7 @@ class MewsesController < ApplicationController
 
   def toggle_visited
     mews = Mews.find(params[:mews_id])
-    mews.visited = params[:mews_id]
+    mews.visited = params[:visited]
     mews.visited_at = Time.at(params[:time_now]) unless mews.visited_at
     mews.save!
   end

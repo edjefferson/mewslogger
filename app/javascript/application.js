@@ -6,6 +6,8 @@ let map
 let markers = {}
 let mewses = {}
 
+let myLocMarker
+
 document.getElementById('inputPhoto').addEventListener('change', (e) => {  
   const data = new FormData();
   const image = e.target.files[0];
@@ -44,9 +46,20 @@ const redIcon = new L.Icon({
   shadowSize: [41, 41]
 });
 
+
 const greenIcon = new L.Icon({
   iconUrl:
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+const blueIcon = new L.Icon({
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
   shadowUrl:
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
   iconSize: [25, 41],
@@ -126,7 +139,7 @@ const openMews = (id) => {
   console.log(id)
   document.getElementById("inputPhoto").setAttribute("data-mews-id",id)
   document.getElementById("visitedcheck").setAttribute("data-mews-id",id)
-
+  document.getElementById("visitedcheck").checked = mewses[id].visited
   document.getElementById("mewsnotes").setAttribute("data-mews-id",id)
   document.getElementById("mewsnotes").value = mewses[id].notes
 
@@ -156,7 +169,11 @@ const toggleVisited = (e) => {
       "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
     },
   }).then((res) => 
-    console.log(res)
+    {
+      console.log(res)
+      mewses[id].visited = e.target.checked
+      markers[id].setIcon(e.target.checked ? greenIcon : blueIcon)
+    }
   )
 }
 document.getElementById("visitedcheck").addEventListener("change",toggleVisited)
@@ -176,8 +193,11 @@ const addMewsToMap = (map) => {
 
         popUp.addEventListener("add",() => (document.getElementById(`mews_${d.id}`).addEventListener("click",() => openMews(d.id))))
         popUp.addEventListener("remove",() => (document.getElementById(`mews_${d.id}`).removeEventListener("click",() => openMews(d.id))))
+        if (d.visited) {
+          markers[d.id] = L.marker([d.lat, d.lng], {title: d.name + " (" + d.id + ")", icon: greenIcon}).addTo(map).bindPopup(popUp);
 
-        if (d.boroughs.includes("Kensington And Chelsea")) {
+        }
+        else if (d.boroughs.includes("Kensington And Chelsea")) {
           markers[d.id] = L.marker([d.lat, d.lng], {title: d.name + " (" + d.id + ")", icon: redIcon}).addTo(map).bindPopup(popUp);
 
         } else {
@@ -198,8 +218,11 @@ const findMe = () => {
 
   navigator.geolocation.getCurrentPosition((position) => {
    //doSomething(position.coords.latitude, position.coords.longitude);
-    L.marker([position.coords.latitude,position.coords.longitude], {icon: blueCircle}).addTo(map)
-
+   if (myLocMarker){
+    myLocMarker.setLatLng(new L.LatLng(position.coords.latitude,position.coords.longitude))
+  } else {
+    myLocMarker = L.marker([position.coords.latitude,position.coords.longitude], {icon: blueCircle}).addTo(map)
+  }
     map.panTo(new L.LatLng(position.coords.latitude,position.coords.longitude));
   });
   
@@ -220,8 +243,11 @@ if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition((position) => {
     //doSomething(position.coords.latitude, position.coords.longitude);
     map.panTo(new L.LatLng(position.coords.latitude,position.coords.longitude));
-
-    L.marker([position.coords.latitude,position.coords.longitude], {icon: blueCircle}).addTo(map)
+    if (myLocMarker){
+      myLocMarker.setLatLng(new L.LatLng(position.coords.latitude,position.coords.longitude))
+    } else {
+      myLocMarker = L.marker([position.coords.latitude,position.coords.longitude], {icon: blueCircle}).addTo(map)
+    }
   
     
       
