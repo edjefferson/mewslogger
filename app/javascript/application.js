@@ -109,6 +109,7 @@ const addBordersToMap = (map) => {
 const openMews = (id) => {
   console.log(id)
   document.getElementById("inputPhoto").setAttribute("data-mews-id",id)
+  document.getElementById("mewsname").textContent = mewses[id].name
   document.getElementById("mewspopup").style.display = "block"
   let imageBlock = document.getElementById("images")
   imageBlock.innerHTML = ""
