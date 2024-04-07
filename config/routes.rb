@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get 'all_mews' => 'mewses#all_mews'
 
   post 'update_mews' => 'mewses#update'
+  post 'togglevisited' => 'mewses#toggle_visited'
 
   post 'imageupload' => 'mewses#upload_image'
 end

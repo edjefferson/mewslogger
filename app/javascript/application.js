@@ -109,6 +109,8 @@ const addBordersToMap = (map) => {
 const openMews = (id) => {
   console.log(id)
   document.getElementById("inputPhoto").setAttribute("data-mews-id",id)
+  document.getElementById("visitedcheck").setAttribute("data-mews-id",id)
+
   document.getElementById("mewsname").textContent = mewses[id].name
   document.getElementById("mewspopup").style.display = "block"
   let imageBlock = document.getElementById("images")
@@ -119,6 +121,23 @@ const openMews = (id) => {
     imageBlock.appendChild(img)
   })
 }
+const toggleVisited = (e) => {
+  console.log(e.target)
+  let id = e.target.getAttribute("data-mews-id")
+  console.log(JSON.stringify({mews_id: id, visited: e.target.checked}))
+  fetch('/togglevisited', {
+    method: 'POST',    
+    body: JSON.stringify({mews_id: id, visited: e.target.checked, time_now: Date.now()}),
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
+    },
+  }).then((res) => 
+    console.log(res)
+  )
+}
+document.getElementById("visitedcheck").addEventListener("change",toggleVisited)
 
 
 const addMewsToMap = (map) => {

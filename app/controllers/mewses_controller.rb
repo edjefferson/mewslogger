@@ -24,6 +24,13 @@ class MewsesController < ApplicationController
     puts params
   end
 
+  def toggle_visited
+    mews = Mews.find(params[:mews_id])
+    mews.visited = params[:mews_id]
+    mews.visited_at = Time.at(params[:time_now]) unless mews.visited_at
+    mews.save!
+  end
+
   def upload_image
     m = MewsImage.new
     m.mews_id = params[:mews_id]
