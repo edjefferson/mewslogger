@@ -10,6 +10,7 @@ class MewsesController < ApplicationController
           name: m.name,
           lat: m.lat,
           lng: m.lng,
+          notes: m.notes,
           boroughs: m.boroughs.map {|b| b.name},
           visited: m.visited,
           visited_at: m.visited_at,
@@ -20,8 +21,11 @@ class MewsesController < ApplicationController
     }
   end
 
-  def update
+  def update_notes
     puts params
+    mews = Mews.find(params[:mews_id])
+    mews.notes = params[:text]
+    mews.save!
   end
 
   def toggle_visited

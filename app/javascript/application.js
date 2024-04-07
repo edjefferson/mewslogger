@@ -9,25 +9,27 @@ let mewses = {}
 document.getElementById('inputPhoto').addEventListener('change', (e) => {  
   const data = new FormData();
   const image = e.target.files[0];
+  let id =  e.target.getAttribute("data-mews-id")
   data.append('mews_id', e.target.getAttribute("data-mews-id"));
   data.append('name', 'sendNameHere');
   data.append('image', image);
-
-  fetch('/imageupload', {
-    method: 'POST',    
-    body: data,
-    headers: {
-      "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
-    },
-  }).then((res) => 
-    res.json()
-  ).then((d) => {
-    console.log(d)
-    let imageBlock = document.getElementById("images")    
-    let img = document.createElement("img")
-    img.src = d.thumb_url
-    imageBlock.appendChild(img)
-  });
+  if (image) {
+    fetch('/imageupload', {
+      method: 'POST',    
+      body: data,
+      headers: {
+        "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
+      },
+    }).then((res) => 
+      res.json()
+    ).then((d) => {
+      mewses[id].images.push(d.thumb_url)
+      let imageBlock = document.getElementById("images")    
+      let img = document.createElement("img")
+      img.src = d.thumb_url
+      imageBlock.appendChild(img)
+    });
+  }
 });
 
 
@@ -63,10 +65,23 @@ const blueCircle = new L.Icon({
 
 
 
-
+const saveNotes = (id,text) => {
+  fetch('update_notes', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
+    },
+    body: JSON.stringify({mews_id: id, text: text})
+  }).then(() => mewses[id].notes = text)
+}
  
 const closePopup = () => {
+  let id = document.getElementById("mewsnotes").getAttribute("data-mews-id")
+  saveNotes(id, document.getElementById("mewsnotes").value)
   document.getElementById("mewspopup").style.display = "none"
+  clearInterval(notesInterval)
 }
 document.getElementById("closepopup").addEventListener("click",closePopup)
 
@@ -106,13 +121,20 @@ const addBordersToMap = (map) => {
 
 }
 
+let notesInterval
 const openMews = (id) => {
   console.log(id)
   document.getElementById("inputPhoto").setAttribute("data-mews-id",id)
   document.getElementById("visitedcheck").setAttribute("data-mews-id",id)
 
+  document.getElementById("mewsnotes").setAttribute("data-mews-id",id)
+  document.getElementById("mewsnotes").value = mewses[id].notes
+
+  notesInterval = setInterval(()=> {
+    saveNotes(id, document.getElementById("mewsnotes").value)
+  },2000)
   document.getElementById("mewsname").textContent = mewses[id].name
-  document.getElementById("mewspopup").style.display = "block"
+  document.getElementById("mewspopup").style.display = "flex"
   let imageBlock = document.getElementById("images")
   imageBlock.innerHTML = ""
   mewses[id].images.forEach((i) => {

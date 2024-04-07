@@ -30,6 +30,15 @@
   width: 100%;
  }
 
+ #images {
+  width: 100%;
+ }
+ #images > img {
+  width: 25%;
+  height: 25vw;
+  object-fit: contain;
+ }
+
  #main {
   position: relative;
   width: 100%;
@@ -39,6 +48,7 @@
   position: absolute;
   display: flex;
   flex-direction: column;
+  align-items: center;
   z-index: 1000;
   top: 0;
   width: 100%;
@@ -47,11 +57,21 @@
   display: none;
  }
 
+ #visitslider {
+  width: 100%;
+ }
+
+ #notes {
+  width: 95%;
+  padding-top: 1em;
+ }
+
  #popuptop {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   margin-bottom: 1em;
+  width: 100%;
  }
  h3 {
   margin: 0;
@@ -116,4 +136,13 @@ input:checked + .slider:before {
   left: unset;
   content: 'VISITED';
 
+}
+
+#mewsnotes {
+  width: 100%;
+  height: 20em;
+}
+
+#photoupload {
+  padding-bottom: 1em;
 }

@@ -4,11 +4,10 @@ class MewsImageUploader < CarrierWave::Uploader::Base
   # include CarrierWave::MiniMagick
 
   # Choose what kind of storage to use for this uploader:
-  puts ENV["RAILS_ENV"]
-  if ENV["RAILS_ENV"] == "production"
-    storage :sftp
-  else
+  if Rails.env.development? || Rails.env.test?
     storage :file
+  else
+    storage :sftp
   end
   # storage :fog
 
@@ -46,7 +45,7 @@ class MewsImageUploader < CarrierWave::Uploader::Base
 
   # Override the filename of the uploaded files:
   # Avoid using model.id or version_name here, see uploader/store.rb for details.
-  def filename
-   "#{model.mews.mews_images.count}#{original_filename ? File.extname(original_filename) : ".jpg"}"
-  end
+  #def filename
+  # "#{model.mews.mews_images.count}#{original_filename ? File.extname(original_filename) : ".jpg"}"
+  #end
 end
