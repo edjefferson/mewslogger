@@ -177,7 +177,8 @@ addBordersToMap(map)
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition((position) => {
     //doSomething(position.coords.latitude, position.coords.longitude);
-     
+    map.panTo(new L.LatLng(position.coords.latitude,position.coords.longitude));
+
     L.marker([position.coords.latitude,position.coords.longitude], {icon: blueCircle}).addTo(map)
   
     
