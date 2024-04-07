@@ -166,17 +166,21 @@ const findMe = () => {
 
 document.getElementById("findme").addEventListener("click",findMe)
 
+map = L.map('map').setView([51.5072, -0.1276], 15);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+addMewsToMap(map)
+addBordersToMap(map)
 
-navigator.geolocation.getCurrentPosition((position) => {
-  //doSomething(position.coords.latitude, position.coords.longitude);
-   map = L.map('map').setView([position.coords.latitude,position.coords.longitude], 15);
-   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  }).addTo(map);
-  L.marker([position.coords.latitude,position.coords.longitude], {icon: blueCircle}).addTo(map)
-
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition((position) => {
+    //doSomething(position.coords.latitude, position.coords.longitude);
+     
+    L.marker([position.coords.latitude,position.coords.longitude], {icon: blueCircle}).addTo(map)
   
-    addMewsToMap(map)
-    addBordersToMap(map)
- });
+    
+      
+   });
+}
