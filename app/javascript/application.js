@@ -94,7 +94,7 @@ const addBordersToMap = (map) => {
         data.features.forEach((f) => {
           L.geoJSON(f, {
             style: function (feature) {
-                return {color: feature.properties.color, stroke: true, color: "black"};
+                return { stroke: true, color: "black", fillColor: "none"};
             }
         }).bindPopup(function (layer) {
             return layer.feature.properties.description;
