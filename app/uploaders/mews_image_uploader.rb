@@ -47,6 +47,6 @@ class MewsImageUploader < CarrierWave::Uploader::Base
   # Override the filename of the uploaded files:
   # Avoid using model.id or version_name here, see uploader/store.rb for details.
   def filename
-   "#{model.mews.mews_images.count}.#{original_filename ? File.extname(original_filename) : "jpg"}"
+   "#{model.mews.mews_images.count}#{original_filename ? File.extname(original_filename) : ".jpg"}"
   end
 end
