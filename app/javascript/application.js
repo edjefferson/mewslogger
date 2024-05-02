@@ -197,7 +197,7 @@ const addMewsToMap = (map) => {
           markers[d.id] = L.marker([d.lat, d.lng], {title: d.name + " (" + d.id + ")", icon: greenIcon}).addTo(map).bindPopup(popUp);
 
         }
-        else if (d.boroughs.includes("Kensington And Chelsea")) {
+        else if (d.boroughs.includes("Newham")) {
           markers[d.id] = L.marker([d.lat, d.lng], {title: d.name + " (" + d.id + ")", icon: redIcon}).addTo(map).bindPopup(popUp);
 
         } else {
