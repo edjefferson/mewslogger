@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "3.3.0"
+ruby "3.3.1"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.1.3"
@@ -74,3 +74,4 @@ gem 'carrierwave', '~> 3.0'
 gem 'carrierwave-ftp', :require => 'carrierwave/storage/ftp/all', :git => 'https://github.com/luan/carrierwave-ftp.git'
 gem 'rmagick'
 gem 'exifr'
+gem 'csv'
