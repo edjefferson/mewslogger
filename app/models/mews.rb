@@ -12,6 +12,15 @@ class Mews < ApplicationRecord
 
   reverse_geocoded_by :lat, :lng
 
+
+  def self.fix_boroughs
+    Mews.left_outer_joins(:boroughs).where(boroughs: {id: nil}).each do |m|
+      borough = m.mews_sources.where.not(gazetteer_entry_id: nil)[0].gazetteer_entry.borough
+      b = Borough.where(name: borough)
+      m.boroughs << b
+    end
+  end
+  
   def self.import_os_open_name
     OsOpenName.left_outer_joins(:mews).where(mews: {id: nil}).each do |os|
 
@@ -72,6 +81,26 @@ class Mews < ApplicationRecord
     end
   end
 
+  def self.import_gazetter_entries
+    GazetteerEntry.left_outer_joins(:mews).where(mews: {id: nil}).each do |osm|
+
+      nearest = Mews.near([osm.lat,osm.lng],0.25, units: :km)
+      nearest_match = nearest[0] ? nearest.select {|n| n.name.downcase.gsub( /\W/,"").gsub("saint","st") == osm.match_name.downcase.gsub( /\W/,"").gsub("saint","st")}[0] : nil
+
+      unless nearest_match
+        mews = self.where(
+          name: osm.match_name.titleize,
+          lat: osm.lat,
+          lng: osm.lng
+        ).first_or_create
+      else
+        mews = nearest_match
+      end
+
+      MewsSource.where(mews_id: mews.id, gazetteer_entry: osm.id).first_or_create
+    end
+  end
+
   def self.export_all
     CSV.open("mews_export.csv","w") do |csv|
       Mews.order(:id).includes(:boroughs).each do |m|
@@ -83,14 +112,15 @@ class Mews < ApplicationRecord
   end
 
   def self.import_update
-    CSV.foreach("mews_update2.csv", headers: true) do |row|
-      if row["new_id"]
-        if row["id"] != row["new_id"]
+    CSV.foreach("mews_update3.csv", headers: true) do |row|
+      if row["new_id"] && Mews.where(id: row["id"])[0]
+        puts "egg"
+        if row["id"] != row["new_id"] 
           MewsSource.where(mews_id: row["id"]).update(mews_id: row["new_id"])
           Mews.find(row["id"]).delete
         else
           mews = Mews.find(row["id"])
-          mews.update(name: row["new_name"], alt_name: row["alt_name"])
+          mews.update(name: row["name"], alt_name: row["alt_name"])
         end
       end
     end
@@ -126,5 +156,39 @@ class Mews < ApplicationRecord
     Mews.find(old_id).delete
   end
 
+  def self.mews_score
+    borough_counts = {}
+    boroughs_done = {}
+    Mews.all.each do |m|
+      m.boroughs.each do |b|
+        boroughs_done[b.name] = 0 unless boroughs_done[b.name]
+        borough_counts[b.name] = 0 unless borough_counts[b.name]
+        borough_counts[b.name] += 1
+      end
+    end
+    boroughs_done["Redbridge"] = 10
+    boroughs_done["Kensington And Chelsea"] = 10
+    puts borough_counts
+    borough_remaining = borough_counts.dup
+
+    while borough_remaining.map {|k,v| v }.sum > 0
+      borough_scores = boroughs_done.map {|k,v| 
+        score = v * 10/borough_counts[k]
+        [k,score]
+      }.sort_by{|v| v[1]}.to_h
+      #puts borough_scores
+
+      next_borough = borough_scores.select {|k,v| v == borough_scores[borough_scores.keys[0]]}.keys.sample
+      if borough_remaining[next_borough] >= 10
+        borough_remaining[next_borough] -= 10
+        boroughs_done[next_borough] += 10
+      else
+        boroughs_done[next_borough] += borough_remaining[next_borough]
+        borough_remaining[next_borough] = 0
+      end
+      puts next_borough
+      #puts borough_scores
+    end
+  end
   
 end

@@ -8,6 +8,41 @@ let mewses = {}
 
 let myLocMarker
 
+const boroughList = {0: "Camden",
+1: "Lambeth",
+2: "Tower Hamlets",
+3: "Enfield",
+4: "Wandsworth",
+5: "Hackney",
+6: "Kensington And Chelsea",
+7: "City Of Westminster",
+8: "Haringey",
+9: "Islington",
+10: "Bromley",
+11: "Lewisham",
+12: "Hammersmith And Fulham",
+13: "Richmond Upon Thames",
+14: "Redbridge",
+15: "Merton",
+16: "Sutton",
+17: "Southwark",
+18: "Barnet",
+19: "Greenwich",
+20: "Waltham Forest",
+21: "Havering",
+22: "Harrow",
+23: "Ealing",
+24: "Kingston Upon Thames",
+25: "Newham",
+26: "Croydon",
+27: "Brent",
+28: "Hounslow",
+29: "Hillingdon",
+30: "Barking And Dagenham",
+31: "Bexley",
+32: "City Of London"}
+
+
 document.getElementById('inputPhoto').addEventListener('change', (e) => {  
   const data = new FormData();
   const image = e.target.files[0];
@@ -178,6 +213,15 @@ const toggleVisited = (e) => {
 }
 document.getElementById("visitedcheck").addEventListener("change",toggleVisited)
 
+const searchParams = new URLSearchParams(window.location.search);
+
+let borough
+if (searchParams.has('bname')) {
+  borough = searchParams.get('bname')
+}
+
+
+
 
 const addMewsToMap = (map) => {
   
@@ -197,7 +241,7 @@ const addMewsToMap = (map) => {
           markers[d.id] = L.marker([d.lat, d.lng], {title: d.name + " (" + d.id + ")", icon: greenIcon}).addTo(map).bindPopup(popUp);
 
         }
-        else if (d.boroughs.includes("Newham")) {
+        else if (d.boroughs.includes(borough)) {
           markers[d.id] = L.marker([d.lat, d.lng], {title: d.name + " (" + d.id + ")", icon: redIcon}).addTo(map).bindPopup(popUp);
 
         } else {

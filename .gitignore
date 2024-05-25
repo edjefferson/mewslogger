@@ -38,3 +38,4 @@
 *.csv
 .DS_Store
 *.dump
+*.gpkg
