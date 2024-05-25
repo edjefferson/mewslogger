@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  borough: MyText
+  usrn: 1
+  name: MyText
+  match_name: MyText
+  address1: MyText
+  address2: MyText
+  maintenace: MyText
+  ownership: MyText
+  lat: 1.5
+  lng: 1.5
+
+two:
+  borough: MyText
+  usrn: 1
+  name: MyText
+  match_name: MyText
+  address1: MyText
+  address2: MyText
+  maintenace: MyText
+  ownership: MyText
+  lat: 1.5
+  lng: 1.5
