@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   root "mewses#index"
   get 'all_mews' => 'mewses#all_mews'
 
+  get 'visited' => 'mewses#visited'
+
   post 'update_mews' => 'mewses#update'
   post 'togglevisited' => 'mewses#toggle_visited'
   post 'update_notes' => 'mewses#update_notes'

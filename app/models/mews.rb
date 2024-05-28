@@ -12,6 +12,15 @@ class Mews < ApplicationRecord
 
   reverse_geocoded_by :lat, :lng
 
+  def self.to_csv
+    mews = self.where(visited: true)
+    CSV.generate do |csv|
+      csv << column_names + ["boroughs"]
+      mews.each do |mew|
+        csv << mew.attributes.values_at(*column_names) + mew.boroughs.map {|b| b.name }.join(";")
+      end
+    end
+   end
 
   def self.fix_boroughs
     Mews.left_outer_joins(:boroughs).where(boroughs: {id: nil}).each do |m|
@@ -173,7 +182,7 @@ class Mews < ApplicationRecord
 
     while borough_remaining.map {|k,v| v }.sum > 0
       borough_scores = boroughs_done.map {|k,v| 
-        score = v * 10/borough_counts[k]
+        score = (v * 10/borough_counts[k].to_f).floor
         [k,score]
       }.sort_by{|v| v[1]}.to_h
       #puts borough_scores

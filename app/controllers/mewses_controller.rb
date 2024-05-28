@@ -1,7 +1,11 @@
 class MewsesController < ApplicationController
   before_action :authenticate_admin!
-  def index
+  def visited
+    respond_to do |format|
+      format.csv { send_data Mews.to_csv, filename: "mews-visited-#{DateTime.now.strftime("%d%m%Y%H%M")}.csv"}
+    end
   end
+   
   def all_mews
     render json: {
       mewses: Mews.all.includes(:boroughs,:mews_images).map { |m| 
