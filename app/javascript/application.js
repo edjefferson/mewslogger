@@ -2,10 +2,13 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 
+//document.currentScript.setAttribute("data-turbolinks-eval", "false");
+
 let map
 let markers = {}
 let mewses = {}
-
+//document.getElementById("map2").innerHTML = "";
+console.log("load")
 let myLocMarker
 
 const boroughList = {0: "Camden",
@@ -105,7 +108,7 @@ const blueIcon = new L.Icon({
 
 const blueCircle = new L.Icon({
   iconUrl:
-    "location.svg",
+    "../location.svg",
       iconSize: [25, 25],
 
   shadowSize: [41, 41]
@@ -232,7 +235,7 @@ const addMewsToMap = (map) => {
     ).then((data) => {
       data.mewses.forEach((d) => {
         mewses[d.id] = d
-        let popupContents  = `<p>${d.name} (${d.id})</p><p><a id="mews_${d.id}" class="openMews">Edit</a>`
+        let popupContents  = `<p><a href=\"/mews/${d.id}">${d.name} (${d.id})</p></a><p><a id="mews_${d.id}" class="openMews">Edit</a>`
         let popUp = L.popup().setContent(popupContents)
 
         popUp.addEventListener("add",() => (document.getElementById(`mews_${d.id}`).addEventListener("click",() => openMews(d.id))))
@@ -275,7 +278,8 @@ const findMe = () => {
 
 document.getElementById("findme").addEventListener("click",findMe)
 
-map = L.map('map').setView([51.5072, -0.1276], 15);
+map = L.map('map2').setView([51.5072, -0.1276], 15);
+
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'

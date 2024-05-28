@@ -75,3 +75,4 @@ gem 'carrierwave-ftp', :require => 'carrierwave/storage/ftp/all', :git => 'https
 gem 'rmagick'
 gem 'exifr'
 gem 'csv'
+gem 'leaflet-rails'

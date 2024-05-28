@@ -1,5 +1,34 @@
 class MewsesController < ApplicationController
   before_action :authenticate_admin!
+
+  def show
+    @mews = Mews.find(params[:id])
+    @mews_sources = @mews.mews_sources.map { |s|
+      if s.os_open_name_id
+        {
+          popup: "os_open_name",
+          latlng: [s.os_open_name.latitude,s.os_open_name.longitude]
+        }
+      elsif s.osm_feature_id
+        {
+          popup: "OSM",
+          latlng: [s.osm_feature.latitude, s.osm_feature.longitude]
+        }
+      elsif s.price_paid_data_point_id
+        {
+          popup: "price_paid_data",
+          latlng: [s.price_paid_data_point.latitude, s.price_paid_data_point.longitude]
+
+        }
+      elsif s.gazetteer_entry_id
+        {
+          popup: "gazetteer",
+          latlng: [s.gazetteer_entry.lat,s.gazetteer_entry.lng]
+        }
+      end
+    }
+  end
+
   def visited
     respond_to do |format|
       format.csv { send_data Mews.to_csv, filename: "mews-visited-#{DateTime.now.strftime("%d%m%Y%H%M")}.csv"}

@@ -12,12 +12,15 @@
  *
  *= require_tree .
  *= require_self
+ *= require leaflet
  */
+
+ 
  body {
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
  }
 
- #map { height: 90svh; }
+ #map, #map2 { height: 90svh; }
 
  #findme {
   height: 50px;
