@@ -2,14 +2,14 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 
-//document.currentScript.setAttribute("data-turbolinks-eval", "false");
+
 
 let map
 let markers = {}
 let mewses = {}
-//document.getElementById("map2").innerHTML = "";
-console.log("load")
 let myLocMarker
+
+
 
 const boroughList = {0: "Camden",
 1: "Lambeth",
@@ -276,28 +276,39 @@ const findMe = () => {
 
 }
 
-document.getElementById("findme").addEventListener("click",findMe)
 
-map = L.map('map2').setView([51.5072, -0.1276], 15);
+const ready = () => {
+  document.getElementById("map2").innerHTML = "";
+  map = []
+  markers = {}
+  mewses = {}
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-addMewsToMap(map)
-addBordersToMap(map)
+  document.getElementById("findme").addEventListener("click",findMe)
 
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition((position) => {
-    //doSomething(position.coords.latitude, position.coords.longitude);
-    map.panTo(new L.LatLng(position.coords.latitude,position.coords.longitude));
-    if (myLocMarker){
-      myLocMarker.setLatLng(new L.LatLng(position.coords.latitude,position.coords.longitude))
-    } else {
-      myLocMarker = L.marker([position.coords.latitude,position.coords.longitude], {icon: blueCircle}).addTo(map)
-    }
-  
+  map = L.map('map2').setView([51.5072, -0.1276], 15);
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }).addTo(map);
+  addMewsToMap(map)
+  addBordersToMap(map)
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      //doSomething(position.coords.latitude, position.coords.longitude);
+      map.panTo(new L.LatLng(position.coords.latitude,position.coords.longitude));
+      if (myLocMarker){
+        myLocMarker.setLatLng(new L.LatLng(position.coords.latitude,position.coords.longitude))
+      } else {
+        myLocMarker = L.marker([position.coords.latitude,position.coords.longitude], {icon: blueCircle}).addTo(map)
+      }
     
       
-   });
+        
+    });
+  }
 }
+
+window.addEventListener("load",ready)
+document.addEventListener("turbo:render",ready)
