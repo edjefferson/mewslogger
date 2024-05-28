@@ -17,7 +17,7 @@ class Mews < ApplicationRecord
     CSV.generate do |csv|
       csv << column_names + ["boroughs"]
       mews.each do |mew|
-        csv << mew.attributes.values_at(*column_names) + mew.boroughs.map {|b| b.name }.join(";")
+        csv << mew.attributes.values_at(*column_names) + [mew.boroughs.map {|b| b.name }.join(";")]
       end
     end
    end
