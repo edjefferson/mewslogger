@@ -1,0 +1,8 @@
+<h1><%= @mews.name %></h1>
+
+<%= map(:center => {
+    :latlng => [@mews.lat, @mews.lng],
+    :zoom => 18
+  },
+  :markers => @mews_sources
+) %>
