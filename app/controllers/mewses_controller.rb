@@ -1,6 +1,7 @@
 class MewsesController < ApplicationController
   before_action :authenticate_admin!
 
+
   def show
     @mews = Mews.find(params[:id])
     @mews_sources = @mews.mews_sources.map { |s|
@@ -27,6 +28,13 @@ class MewsesController < ApplicationController
         }
       end
     }
+    mews_json = @mews.as_json
+    mews_json["sources"] = @mews_sources
+    mews_json["boroughs"] = @mews.boroughs
+    respond_to do |format|
+      format.html # show.html.erb
+      format.json { render json: mews_json }
+    end
   end
 
   def visited
@@ -77,5 +85,12 @@ class MewsesController < ApplicationController
     render json: {
       thumb_url: m.image.thumb.url
     }
+  end
+
+  def update_mews_lat_lng
+    m = Mews.find(params[:mews_id])
+    m.lat = params[:latlng][0]
+    m.lng = params[:latlng][1]
+    m.save
   end
 end

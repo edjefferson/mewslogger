@@ -19,4 +19,6 @@ Rails.application.routes.draw do
   post 'togglevisited' => 'mewses#toggle_visited'
   post 'update_notes' => 'mewses#update_notes'
   post 'imageupload' => 'mewses#upload_image'
+
+  post 'update_mews_lat_lng' => 'mewses#update_mews_lat_lng'
 end

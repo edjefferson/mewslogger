@@ -8,7 +8,7 @@ let map
 let markers = {}
 let mewses = {}
 let myLocMarker
-
+let mainMarker
 
 
 const boroughList = {0: "Camden",
@@ -46,31 +46,7 @@ const boroughList = {0: "Camden",
 32: "City Of London"}
 
 
-document.getElementById('inputPhoto').addEventListener('change', (e) => {  
-  const data = new FormData();
-  const image = e.target.files[0];
-  let id =  e.target.getAttribute("data-mews-id")
-  data.append('mews_id', e.target.getAttribute("data-mews-id"));
-  data.append('name', 'sendNameHere');
-  data.append('image', image);
-  if (image) {
-    fetch('/imageupload', {
-      method: 'POST',    
-      body: data,
-      headers: {
-        "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
-      },
-    }).then((res) => 
-      res.json()
-    ).then((d) => {
-      mewses[id].images.push(d.thumb_url)
-      let imageBlock = document.getElementById("images")    
-      let img = document.createElement("img")
-      img.src = d.thumb_url
-      imageBlock.appendChild(img)
-    });
-  }
-});
+
 
 
 const redIcon = new L.Icon({
@@ -134,7 +110,32 @@ const closePopup = () => {
   document.getElementById("mewspopup").style.display = "none"
   clearInterval(notesInterval)
 }
-document.getElementById("closepopup").addEventListener("click",closePopup)
+
+const imageUpload = (e) => {  
+  const data = new FormData();
+  const image = e.target.files[0];
+  let id =  e.target.getAttribute("data-mews-id")
+  data.append('mews_id', e.target.getAttribute("data-mews-id"));
+  data.append('name', 'sendNameHere');
+  data.append('image', image);
+  if (image) {
+    fetch('/imageupload', {
+      method: 'POST',    
+      body: data,
+      headers: {
+        "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
+      },
+    }).then((res) => 
+      res.json()
+    ).then((d) => {
+      mewses[id].images.push(d.thumb_url)
+      let imageBlock = document.getElementById("images")    
+      let img = document.createElement("img")
+      img.src = d.thumb_url
+      imageBlock.appendChild(img)
+    })
+  }
+}
 
 
 const markVisited = (id) => {
@@ -153,7 +154,7 @@ const markVisited = (id) => {
 
 
 const addBordersToMap = (map) => {
-  fetch("lad.json")
+  fetch("../lad.json")
     .then((response) => 
       response.json()
     ).then((data) => {
@@ -214,7 +215,6 @@ const toggleVisited = (e) => {
     }
   )
 }
-document.getElementById("visitedcheck").addEventListener("change",toggleVisited)
 
 const searchParams = new URLSearchParams(window.location.search);
 
@@ -276,38 +276,96 @@ const findMe = () => {
 
 }
 
+const setMewsLatLng = (popUp,mews_id, latlng) => {
+  console.log("egg")
+  fetch('../update_mews_lat_lng', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
+    },
+    body: JSON.stringify({mews_id: mews_id, latlng: latlng})
+  }).then(() => {
+    popUp.close()
+    console.log(latlng)
+    mainMarker.setLatLng(latlng)
+  })
+}
+
+const addMewDataToMap = (mews_id) => {
+  fetch(`../mews/${mews_id}.json`)
+    .then((response) => 
+      response.json()
+    ).then((data) => {
+
+      map.setView([data.lat,data.lng], 18);
+
+      
+      data.sources.forEach((source) => {
+        let popupContents  = `<p><a id="source_${source.id}" class="setLatLng">Set Lat Lng</a>`
+        let popUp = L.popup().setContent(popupContents)
+
+        popUp.addEventListener("add",() => (document.getElementById(`source_${source.id}`).addEventListener("click",(e) => setMewsLatLng(popUp,data.id,source.latlng))))
+        popUp.addEventListener("remove",() => (document.getElementById(`source_${source.id}`).removeEventListener("click",(e) => setMewsLatLng(popUp,data.id,source.latlng))))
+
+        L.marker(source.latlng,  {icon: blueIcon}).addTo(map).bindPopup(popUp);
+      })
+      mainMarker = L.marker([data.lat, data.lng], {title: data.name + " (" + data.id + ")", icon: redIcon}).addTo(map)
+      
+      console.log(data)
+     })
+}
 
 const ready = () => {
-  document.getElementById("map2").innerHTML = "";
-  map = []
-  markers = {}
-  mewses = {}
+  if (document.getElementById("map2")) {
+    document.getElementById("closepopup").addEventListener("click",closePopup)
 
-  document.getElementById("findme").addEventListener("click",findMe)
+    document.getElementById('inputPhoto').addEventListener('change', imageUpload);
+    document.getElementById("visitedcheck").addEventListener("change",toggleVisited)
 
-  map = L.map('map2').setView([51.5072, -0.1276], 15);
 
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      }).addTo(map);
-  addMewsToMap(map)
-  addBordersToMap(map)
+    document.getElementById("map2").innerHTML = "";
+    map = []
+    markers = {}
+    mewses = {}
 
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      //doSomething(position.coords.latitude, position.coords.longitude);
-      map.panTo(new L.LatLng(position.coords.latitude,position.coords.longitude));
-      if (myLocMarker){
-        myLocMarker.setLatLng(new L.LatLng(position.coords.latitude,position.coords.longitude))
-      } else {
-        myLocMarker = L.marker([position.coords.latitude,position.coords.longitude], {icon: blueCircle}).addTo(map)
-      }
-    
-      
-        
-    });
+    document.getElementById("findme").addEventListener("click",findMe)
+
+    map = L.map('map2').setView([51.5072, -0.1276], 15);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+    addMewsToMap(map)
+    addBordersToMap(map)
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        //doSomething(position.coords.latitude, position.coords.longitude);
+        map.panTo(new L.LatLng(position.coords.latitude,position.coords.longitude));
+        if (myLocMarker){
+          myLocMarker.setLatLng(new L.LatLng(position.coords.latitude,position.coords.longitude))
+        } else {
+          myLocMarker = L.marker([position.coords.latitude,position.coords.longitude], {icon: blueCircle}).addTo(map)
+        }
+      });
+    }
+  } else
+  if (document.getElementById("mewsmap")) {
+    map = L.map('mewsmap').setView([51.5072, -0.1276], 15);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+    addBordersToMap(map)
+    addMewDataToMap(document.getElementById("mewsmap").getAttribute("data-mews-id"))
   }
+  
 }
 
 window.addEventListener("load",ready)

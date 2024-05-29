@@ -22,6 +22,10 @@
 
  #map, #map2 { height: 90svh; }
 
+ #mewsmap {
+  height: 45svh;
+ }
+
  #findme {
   height: 50px;
   width: fit-content;
