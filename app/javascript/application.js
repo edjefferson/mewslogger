@@ -6,6 +6,7 @@ import "controllers"
 
 let map
 let markers = {}
+let markerGroup = L.markerClusterGroup({ disableClusteringAtZoom: 13 });
 let mewses = {}
 let myLocMarker
 let mainMarker
@@ -240,17 +241,20 @@ const addMewsToMap = (map) => {
 
         popUp.addEventListener("add",() => (document.getElementById(`mews_${d.id}`).addEventListener("click",() => openMews(d.id))))
         popUp.addEventListener("remove",() => (document.getElementById(`mews_${d.id}`).removeEventListener("click",() => openMews(d.id))))
+        let newMark
         if (d.visited) {
-          markers[d.id] = L.marker([d.lat, d.lng], {title: d.name + " (" + d.id + ")", icon: greenIcon}).addTo(map).bindPopup(popUp);
-
+          newMark = L.marker([d.lat, d.lng], {title: d.name + " (" + d.id + ")", icon: greenIcon}).bindPopup(popUp);
         }
         else if (d.boroughs.includes(borough)) {
-          markers[d.id] = L.marker([d.lat, d.lng], {title: d.name + " (" + d.id + ")", icon: redIcon}).addTo(map).bindPopup(popUp);
+          newMark = L.marker([d.lat, d.lng], {title: d.name + " (" + d.id + ")", icon: redIcon}).bindPopup(popUp);
 
         } else {
-          markers[d.id] = L.marker([d.lat, d.lng], {title: d.name}).addTo(map).bindPopup(popUp);
+          newMark = L.marker([d.lat, d.lng], {title: d.name}).bindPopup(popUp);
         }
+        markers[d.id] = newMark
+        markerGroup.addLayer(newMark)
      })
+     map.addLayer(markerGroup)
     
         
  
